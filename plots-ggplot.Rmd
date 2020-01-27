@@ -8,3 +8,24 @@ output: html_document
 # Plots with ggplot2
 
 We are going to make plots in R using the ggplot2 package from the tidyverse.
+
+We will install these packages:
+
+- tidyverse: suite of packages for wrangling and visualization (ggplot)
+- readxl: to read in excel files (in many ways, shapes and sizes)
+- here: to help with filepaths
+
+```{r setup, message=FALSE}
+library(tidyverse) # install.packages("tidyverse")
+library(readxl) # install.packages("readxl")
+library(here) # install.packages("here")
+```
+
+# California National Parks Data
+
+```{r read data}
+
+ca_np <- read_csv(here("data/ca_np.csv"))
+
+```
+
