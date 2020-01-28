@@ -1,0 +1,113 @@
+---
+title: 'R Workshop Day 2: Tidying Session'
+author: "Matthew Pfaff"
+date: "1/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+
+# Attaching packages
+
+library(tidyverse) # install.packages("tidyverse")
+library(janitor) # install.packages("janitor")
+library(here) # install.packages("here")
+library(readxl) # install.packages("readxl")
+```
+
+### Read in inverts.xlsx
+
+```{r}
+inverts <- read_excel(here("data/inverts.xlsx"))
+```
+
+### Pivot Longer
+
+`pivot_longer` is how we will convert wide date to long data. We can use a single colon (:) to indicuate a series of sequential columns (e.g., A:D).
+
+What if you want some in series and some NOT in series?
+c('2016':'2018', '2020')
+
+```{r}
+inverts_long <- pivot_longer(data = inverts, 
+                             cols = '2016':'2018',
+                             names_to = "year",
+                             values_to = "species_count")
+```
+
+### Pivot Wider
+
+`pivot_wider` is how we can convert long data to wide data. We are using the pipe operator here ( %>% AKA "and then") to show another way of doing it.
+
+```{r}
+inverts_wide <- inverts_long %>% 
+  pivot_wider(names_from = common_name,
+              values_from = species_count)
+```
+
+### Cleaning Names
+
+`janitor::clean_names()`
+
+We don't like spaces in data because you have to have quotes around the field. We can use the Janitor package to clean the names into whatever we want.
+
+```{r}
+inverts_wide <- inverts_wide %>%
+  clean_names()
+```
+
+### Combining information from columns
+
+`tidyr::unite()` to combine information from columns
+
+Example: merge the site code and year into a signle column called "site_year"
+
+```{r}
+inverts_unite <- inverts_long %>% 
+  unite(col = "site_year",
+        c(site, year),
+        sep = "_")
+```
+
+### Activity
+
+Create a new object called `inverts_moyr` starting from inverts_long that unites the month and year columns into a single column name "mo_yr", using a slash "/" as the separator ... then try some other fun separator.
+
+```{r}
+inverts_moyr <- inverts_long %>%
+  unite(col = "mo_yr",
+        c(month, year),
+        sep = "/")
+```
+
+### Separating information from a column
+
+`tidyr::separate()` to separate information from a column
+
+```{r}
+inverts_sep <- inverts_unite %>% 
+  separate(col = site_year,
+           into = c("my_site", "my_year"))
+```
+
+### How do we work with words in our data
+
+`stringr`
+
+`mutate()` allows you to add a column while keeping existing columns or overwrite an existing column (but be careful with overwriting because it is generally better to add a column rather than delete a column)
+
+Example: using built in `trees` dataset with mutate() to add 5 to all the tree heights
+
+```{r}
+trees_new <- trees %>% 
+  mutate(height_update = Height + 5)
+```
+
+
+
+
+
+
+
+
