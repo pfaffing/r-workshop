@@ -16,7 +16,7 @@ library(kableExtra) # install.packages("kableExtra")
 
 # read in lobster data
 
-lobsters <- read_xlsx(here("data/lobsters.xlsx"),
+lobsters <- read_xlsx(here("data/lobsters2.xlsx"),
                       skip = 4)
 
 ```
@@ -77,7 +77,22 @@ siteyear_summary %>%
   kable()
 ```
 
-# If you add in r in front of a field, it will be included in the markdown report: 
+If you add in r in front of a field, it will be included in the markdown report: 
 
 There are `r nrow(lobsters)` total lobsters including in this report.
+
+
+## Activity
+1. Build from our analyses: calculate the median lobster size for each site and year (hint: `size_mm and a function called `median()`)
+
+2. Make a simple ggplot and save.
+
+3. sync this to github
+
+```{r}
+lobsters %>% 
+  group_by(site, year) %>% 
+  summarize(count_by_site_year = n(),
+            median_size_mm = median(size_mm, na.rm = TRUE))
+```
 
