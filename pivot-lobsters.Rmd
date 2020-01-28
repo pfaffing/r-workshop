@@ -1,0 +1,83 @@
+---
+title: "Pivot Lobsters"
+author: "Matthew Pfaff"
+date: "1/27/2020"
+output: html_document
+---
+
+Attaching our packages and reading in data
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(here)
+library(skimr) # install.packages("skimr") 
+library(kableExtra) # install.packages("kableExtra")
+
+# read in lobster data
+
+lobsters <- read_xlsx(here("data/lobsters.xlsx"),
+                      skip = 4)
+
+```
+
+
+Viewing our data with skimr
+
+```{r}
+# these are equivalent
+skimr::skim(lobsters) #explicitly stated from skimr
+# skim(lobsters) # not explicity, but okay because we've loaded the package
+```
+
+# Pivot Tables
+
+In R, pivot tables are: `group_by() %>% summarize()`
+`n()` function will count observations
+
+```{r}
+
+# Group by year
+
+lobsters %>% 
+  group_by(year) %>% 
+  summarize(count_by_year = n())
+
+# Group by year and site
+
+lobsters %>% 
+  group_by(year, site) %>% 
+  summarize(count_by_year_site = n())
+
+# Group by site and year
+
+lobsters %>% 
+  group_by(site, year) %>% 
+  summarize(count_by_site_year = n())
+
+```
+
+Summarize by multiple variables
+
+```{r}
+
+# `na.rm` is a way to remove missing values; it allows the mean to be calculated even when there is missing values
+
+siteyear_summary <- lobsters %>% 
+  group_by(site, year) %>% 
+  summarize(count_by_site_year = n(),
+            mean_size_mm = mean(size_mm, na.rm = TRUE),
+            sd_size_mm = sd(size_mm, na.rm = TRUE))
+```
+
+Table formatting with `kableExtra::kable()`
+
+```{r}
+siteyear_summary %>%
+  kable()
+```
+
+# If you add in r in front of a field, it will be included in the markdown report: 
+
+There are `r nrow(lobsters)` total lobsters including in this report.
+
